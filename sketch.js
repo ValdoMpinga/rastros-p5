@@ -2,7 +2,7 @@ const boardSize = 7;
 const cellSize = 60;
 let board = [];
 let currentPlayer = 0; // 0 for white, 1 for black
-let houses = [[0, 0], [boardSize - 1, boardSize - 1]]; // [x, y]
+let houses = [[0, boardSize - 1], [boardSize - 1, 0]]; // Updated house positions
 let ballPos = { x: 3, y: 4 };
 let isDragging = false;
 let offsetX, offsetY;
@@ -80,42 +80,44 @@ function mouseReleased()
     }
 }
 
-function mouseDragged()
-{
-    if (isDragging)
-    {
-        // Update the position of the ball to follow the mouse cursor
-        const targetX = Math.floor((mouseX - offsetX + cellSize / 2) / cellSize);
-        const targetY = Math.floor((mouseY - offsetY + cellSize / 2) / cellSize);
-
-        // Check if the target position is a valid move and is a house
-        if (isLegalMove(targetX, targetY) && board[targetX][targetY] === 'house')
-        {
-            ballPos.x = targetX;
-            ballPos.y = targetY;
-        }
-    }
-}
-
-
-
-
-
 function isLegalMove(x, y)
 {
     if (x < 0 || x >= boardSize || y < 0 || y >= boardSize)
     {
+        console.log("Out of bounds ", x, y);
         return false; // Out of bounds
     }
-    if (board[x][y] !== false)
+
+    // Check if the target is a house and allow adjacent move
+    if ((x === houses[0][0] && y === houses[0][1]) || (x === houses[1][0] && y === houses[1][1]))
     {
-        return false; // Cell already occupied
+        const dx = Math.abs(x - ballPos.x);
+        const dy = Math.abs(y - ballPos.y);
+        if (dx <= 1 && dy <= 1)
+        {
+            return true; // Allow move to house if adjacent
+        }
+        return false; // House but not adjacent
     }
-    // Check if the target position is adjacent to the current position of the ball
+
+    // Check for regular adjacent move (including diagonally)
     const dx = Math.abs(x - ballPos.x);
     const dy = Math.abs(y - ballPos.y);
-    return (dx <= 1 && dy <= 1);
+    if (dx <= 1 && dy <= 1)
+    {
+        return true; // Move is adjacent (including diagonally)
+    }
+
+    if (board[x][y] !== false)
+    {
+        console.log("Cell occupied ", x, y);
+    }
+    return false; // Otherwise, not a legal move
 }
+
+
+
+
 
 function movePiece(x, y)
 {
