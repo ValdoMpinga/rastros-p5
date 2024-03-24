@@ -84,10 +84,22 @@ function mouseDragged()
 {
     if (isDragging)
     {
-        ballPos.x = Math.floor((mouseX - offsetX) / cellSize);
-        ballPos.y = Math.floor((mouseY - offsetY) / cellSize);
+        // Update the position of the ball to follow the mouse cursor
+        const targetX = Math.floor((mouseX - offsetX + cellSize / 2) / cellSize);
+        const targetY = Math.floor((mouseY - offsetY + cellSize / 2) / cellSize);
+
+        // Check if the target position is a valid move and is a house
+        if (isLegalMove(targetX, targetY) && board[targetX][targetY] === 'house')
+        {
+            ballPos.x = targetX;
+            ballPos.y = targetY;
+        }
     }
 }
+
+
+
+
 
 function isLegalMove(x, y)
 {
