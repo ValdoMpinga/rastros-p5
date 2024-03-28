@@ -115,12 +115,45 @@ function isLegalMove(x, y)
     return false;
 }
 
-
-
 function movePiece(x, y)
 {
-    board[ballPos.x][ballPos.y] = true; 
-    board[x][y] = false; 
+    board[ballPos.x][ballPos.y] = true;
+    board[x][y] = false;
     ballPos.x = x;
     ballPos.y = y;
+
+    // Check if the ball reached house 1
+    if (x === houses[0][0] && y === houses[0][1])
+    {
+        setTimeout(() =>
+        {
+            const playAgain = confirm("Player 1 won! Want to play again?");
+            if (playAgain)
+            {
+                resetGame();
+            }
+        }, 100);
+    }
+    // Check if the ball reached house 2
+    else if (x === houses[1][0] && y === houses[1][1])
+    {
+        setTimeout(() =>
+        {
+            const playAgain = confirm("Player 2 won! Want to play again?");
+            if (playAgain)
+            {
+                resetGame();
+            }
+        }, 100);
+    }
+
+    currentPlayer = 1 - currentPlayer; // Switch player turn
+}
+
+
+function resetGame()
+{
+    initializeBoard();
+    ballPos = { x: 3, y: 4 };
+    currentPlayer = 0;
 }
