@@ -1,8 +1,8 @@
 const boardSize = 7;
 const cellSize = 60;
 let board = [];
-let currentPlayer = 0; // 0 for white, 1 for black
-let houses = [[0, boardSize - 1], [boardSize - 1, 0]]; // Updated house positions
+let currentPlayer = 0; 
+let houses = [[0, boardSize - 1], [boardSize - 1, 0]]; 
 let ballPos = { x: 3, y: 4 };
 let isDragging = false;
 let offsetX, offsetY;
@@ -37,13 +37,13 @@ function drawBoard()
         {
             if (board[x][y] === 'house')
             {
-                fill(255, 0, 0); // Red color for houses
+                fill(255, 0, 0); 
             } else if (board[x][y] === true)
             {
-                fill(0); // Black color for blocks
+                fill(0); 
             } else
             {
-                fill(255); // White color for empty cells
+                fill(255); 
             }
             rect(x * cellSize, y * cellSize, cellSize, cellSize);
         }
@@ -52,7 +52,7 @@ function drawBoard()
 
 function drawBall()
 {
-    fill(255, 255, 0); // Yellow color for the ball
+    fill(255, 255, 0); 
     ellipse(ballPos.x * cellSize + cellSize / 2, ballPos.y * cellSize + cellSize / 2, cellSize * 0.8);
 }
 
@@ -76,7 +76,7 @@ function mouseReleased()
     if (isLegalMove(x, y))
     {
         movePiece(x, y);
-        currentPlayer = 1 - currentPlayer; // Switch player
+        currentPlayer = 1 - currentPlayer; 
     }
 }
 
@@ -105,14 +105,14 @@ function isLegalMove(x, y)
     const dy = Math.abs(y - ballPos.y);
     if (dx <= 1 && dy <= 1)
     {
-        return true; // Move is adjacent (including diagonally)
+        return true;
     }
 
     if (board[x][y] !== false)
     {
         console.log("Cell occupied ", x, y);
     }
-    return false; // Otherwise, not a legal move
+    return false; 
 }
 
 
@@ -121,8 +121,8 @@ function isLegalMove(x, y)
 
 function movePiece(x, y)
 {
-    board[ballPos.x][ballPos.y] = true; // Mark the previous cell as occupied
-    board[x][y] = false; // Mark the new cell as empty
+    board[ballPos.x][ballPos.y] = true; 
+    board[x][y] = false; 
     ballPos.x = x;
     ballPos.y = y;
 }
