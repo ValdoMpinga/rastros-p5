@@ -68,6 +68,27 @@ function mousePressed()
     }
 }
 
+function isBlocked()
+{
+    for (let dx = -1; dx <= 1; dx++)
+    {
+        for (let dy = -1; dy <= 1; dy++)
+        {
+            if (!(dx === 0 && dy === 0))
+            { // Exclude the current position
+                const newX = ballPos.x + dx;
+                const newY = ballPos.y + dy;
+                if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize && board[newX][newY] !== true)
+                {
+                    return false; // At least one legal move is available
+                }
+            }
+        }
+    }
+    return true; // No legal moves available
+}
+
+
 function mouseReleased()
 {
     isDragging = false;
@@ -76,9 +97,21 @@ function mouseReleased()
     if (isLegalMove(x, y))
     {
         movePiece(x, y);
-        currentPlayer = 1 - currentPlayer; 
+        currentPlayer = 1 - currentPlayer;
+        if (isBlocked())
+        {
+            setTimeout(() =>
+            {
+                const playAgain = confirm("No legal moves available. Player " + (currentPlayer + 1) + " wins! Want to play again?");
+                if (playAgain)
+                {
+                    resetGame();
+                }
+            }, 100);
+        }
     }
 }
+
 
 function isLegalMove(x, y)
 {
@@ -151,9 +184,11 @@ function movePiece(x, y)
 }
 
 
+
 function resetGame()
 {
     initializeBoard();
     ballPos = { x: 3, y: 4 };
     currentPlayer = 0;
 }
+
