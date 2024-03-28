@@ -103,19 +103,17 @@ function isLegalMove(x, y)
     // Check for regular adjacent move (including diagonally)
     const dx = Math.abs(x - ballPos.x);
     const dy = Math.abs(y - ballPos.y);
-    if (dx <= 1 && dy <= 1)
+    if (dx <= 1 && dy <= 1 && board[x][y] !== true)
     {
         return true;
     }
 
-    if (board[x][y] !== false)
+    if (board[x][y] === true)
     {
         console.log("Cell occupied ", x, y);
     }
-    return false; 
+    return false;
 }
-
-
 
 
 
