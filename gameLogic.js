@@ -15,7 +15,9 @@ class GameLogic
         const y = Math.floor(mouseY / cellSize);
         if (x === this.ball.position.x && y === this.ball.position.y)
         {
-            // Implement dragging logic
+            isDragging = true;
+            offsetX = mouseX - ballPos.x * cellSize;
+            offsetY = mouseY - ballPos.y * cellSize;
         }
     }
 
@@ -95,6 +97,8 @@ class GameLogic
         {
             if (x === house.position[0] && y === house.position[1])
             {
+                this.ball.position.x = house.position[0];
+                this.ball.position.y = house.position[1];
                 setTimeout(() =>
                 {
                     const playAgain = confirm("Player " + (this.currentPlayer + 1) + " won! Want to play again?");
@@ -109,6 +113,7 @@ class GameLogic
 
         this.currentPlayer = 1 - this.currentPlayer; // Switch player turn
     }
+
 
     resetGame()
     {

@@ -1,4 +1,4 @@
-class House
+class house
 {
     constructor(position)
     {
@@ -8,7 +8,7 @@ class House
     draw()
     {
         const cellSize = width / boardSize;
-        fill(255, 0, 0);
+       fill(255, 69, 0); 
         rect(this.position[0] * cellSize, this.position[1] * cellSize, cellSize, cellSize);
     }
 }
