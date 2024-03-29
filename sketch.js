@@ -1,4 +1,4 @@
-const boardSize = 8;
+const boardSize = 7;
 const cellSize = 60;
 
 let board;
