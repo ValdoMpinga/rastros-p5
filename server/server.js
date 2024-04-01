@@ -12,22 +12,30 @@ const io = socketIo(server);
 
 let connectedClients = 0;
 
-// Use the cors middleware with appropriate options
 app.use(cors());
-app.use(express.static(path.join(__dirname, '../public')));
+
+// Custom middleware to serve static files conditionally
+app.use((req, res, next) =>
+{
+    if (connectedClients < 2)
+    {
+        express.static(path.join(__dirname, '../public'))(req, res, next);
+    } else
+    {
+        res.status(403).send('Too many connected clients');
+    }
+});
 
 app.get('/', (req, res) =>
 {
-    res.sendFile(path.join(__dirname, '../index.html')); 
+    console.log('Request received for /');
+    res.send('Hello World');
 });
 
 io.on('connection', (socket) =>
 {
     connectedClients++;
     console.log('A user connected. Total connected clients:', connectedClients);
-
-    // Set CORS headers
-    socket.handshake.headers.origin = '*'; // Allow requests from any origin
 
     socket.on('disconnect', () =>
     {
@@ -37,11 +45,10 @@ io.on('connection', (socket) =>
 
     socket.on('move', (data) =>
     {
-        // Handle the move here, update the game state, and broadcast the updated board to all clients
-        io.emit('update', data); // Broadcast the updated board to all clients
+        console.log(data);
+        io.emit('update', data);
     });
 });
-
 
 server.listen(PORT, () =>
 {

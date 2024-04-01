@@ -1,3 +1,5 @@
+// import { initializeSocket } from "./helpers/socket";
+
 const boardSize = 7;
 const cellSize = 60;
 let board = [];
@@ -6,9 +8,11 @@ let houses = [[0, boardSize - 1], [boardSize - 1, 0]];
 let ballPos = { x: 3, y: 4 };
 let isDragging = false;
 let offsetX, offsetY;
+let socket 
 
 function setup()
 {
+     initializeSocket()
     createCanvas(boardSize * cellSize, boardSize * cellSize);
     initializeBoard();
 }
@@ -159,13 +163,12 @@ function isLegalMove(x, y)
 
 async function movePiece(x, y)
 {
-    socket = await io.connect('http://localhost:3003');
-    console.log(socket);
-
+    
     board[ballPos.x][ballPos.y] = true;
     board[x][y] = false;
     ballPos.x = x;
     ballPos.y = y;
+    moveEvent(ballPos.x, ballPos.y)
 
     // Check if the ball reached house 1
     if (x === houses[0][0] && y === houses[0][1])
@@ -204,3 +207,31 @@ function resetGame()
     currentPlayer = 0;
 }
 
+function initializeSocket()
+{
+    // Connect to the Socket.io server
+    socket = io.connect('http://localhost:3003');
+
+    // Example of listening for acknowledgment from the server
+    socket.on('update', (data, acknowledgment) =>
+    {
+        // Handle the update event from the server
+        console.log('Received update from server:', data);
+
+        // Acknowledge the event to the server if required
+        acknowledgment('Received the update successfully!');
+    });
+
+    return socket; // Returning the socket object
+}
+
+function moveEvent(data)
+{
+    console.log("here");
+    // Emit the move event to the server
+    socket.emit('move', data, () =>
+    {
+        // This callback function will be called when the server acknowledges the event
+        console.log('Server acknowledged the move event:');
+    });
+}
