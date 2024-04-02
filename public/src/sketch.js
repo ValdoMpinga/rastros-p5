@@ -8,7 +8,9 @@ let houses = [[0, boardSize - 1], [boardSize - 1, 0]];
 let ballPos = { x: 3, y: 4 };
 let isDragging = false;
 let offsetX, offsetY;
-let socket 
+let socket
+let player = null
+let turn = 1 
 
 function setup()
 {
@@ -40,6 +42,15 @@ function draw()
     background(255);
     drawBoard();
     drawBall();
+    drawPlayer()
+}
+
+function drawPlayer()
+{
+    fill(0);
+    textSize(20);
+    textAlign(CENTER);
+    text("Current Player: " + (player), width / 2, 20);
 }
 
 function drawBoard()
@@ -168,7 +179,8 @@ async function movePiece(x, y)
     board[x][y] = false;
     ballPos.x = x;
     ballPos.y = y;
-    moveEvent(ballPos.x, ballPos.y)
+    data = [ballPos.x, ballPos.y]
+    moveEvent(data)
 
     // Check if the ball reached house 1
     if (x === houses[0][0] && y === houses[0][1])
@@ -212,14 +224,19 @@ function initializeSocket()
     // Connect to the Socket.io server
     socket = io.connect('http://localhost:3003');
 
-    // Example of listening for acknowledgment from the server
-    socket.on('update', (data, acknowledgment) =>
+    socket.on('update', (data) =>
     {
         // Handle the update event from the server
         console.log('Received update from server:', data);
 
-        // Acknowledge the event to the server if required
-        acknowledgment('Received the update successfully!');
+    });
+
+    socket.on('join', (data) =>
+    {
+        if (player == null)
+            player = data
+        console.log(data);
+
     });
 
     return socket; // Returning the socket object
@@ -227,11 +244,8 @@ function initializeSocket()
 
 function moveEvent(data)
 {
-    console.log("here");
-    // Emit the move event to the server
     socket.emit('move', data, () =>
     {
-        // This callback function will be called when the server acknowledges the event
         console.log('Server acknowledged the move event:');
     });
 }

@@ -14,7 +14,6 @@ let connectedClients = 0;
 
 app.use(cors());
 
-// Custom middleware to serve static files conditionally
 app.use((req, res, next) =>
 {
     if (connectedClients < 2)
@@ -37,6 +36,9 @@ io.on('connection', (socket) =>
     connectedClients++;
     console.log('A user connected. Total connected clients:', connectedClients);
 
+    io.emit('join', `Player ${connectedClients}`);
+
+
     socket.on('disconnect', () =>
     {
         connectedClients--;
@@ -45,7 +47,7 @@ io.on('connection', (socket) =>
 
     socket.on('move', (data) =>
     {
-        console.log(data);
+        console.log("Piece moved to: " + data);
         io.emit('update', data);
     });
 });
