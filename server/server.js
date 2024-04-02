@@ -45,18 +45,20 @@ io.on('connection', (socket) =>
         console.log('A user disconnected. Total connected clients:', connectedClients);
     });
 
-    socket.on('move', (data) =>
+    socket.on('move-piece', (data) =>
     {
         console.log("Piece moved to: " + data);
-        io.emit('update', data);
+        io.emit('move-piece', data);
     });
 
 
     socket.on('switch-turn', () =>
     {
-        console.log("Emmitign switch turn");
+        console.log("Emmiting switch turn");
         io.emit('switch-turn');
     });
+
+    
 });
 
 server.listen(PORT, () =>

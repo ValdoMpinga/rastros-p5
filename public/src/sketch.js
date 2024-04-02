@@ -1,10 +1,8 @@
-// import { initializeSocket } from "./helpers/socket";
-
 const boardSize = 7;
 const cellSize = 60;
 let board = [];
-let currentPlayer = 0; 
-let houses = [[0, boardSize - 1], [boardSize - 1, 0]]; 
+let currentPlayer = 0;
+let houses = [[0, boardSize - 1], [boardSize - 1, 0]];
 let ballPos = { x: 3, y: 4 };
 let isDragging = false;
 let offsetX, offsetY;
@@ -14,7 +12,7 @@ let playerOneTurn = true
 
 function setup()
 {
-     initializeSocket()
+    initializeSocket()
     createCanvas(boardSize * cellSize, boardSize * cellSize);
     initializeBoard();
 }
@@ -23,7 +21,6 @@ function initializeBoard()
 {
     try
     {
-
         board = Array.from({ length: boardSize }, () => Array(boardSize).fill(false));
         for (const [x, y] of houses)
         {
@@ -61,13 +58,13 @@ function drawBoard()
         {
             if (board[x][y] === 'house')
             {
-                fill(255, 0, 0); 
+                fill(255, 0, 0);
             } else if (board[x][y] === true)
             {
-                fill(0); 
+                fill(0);
             } else
             {
-                fill(255); 
+                fill(255);
             }
             rect(x * cellSize, y * cellSize, cellSize, cellSize);
         }
@@ -76,7 +73,7 @@ function drawBoard()
 
 function drawBall()
 {
-    fill(255, 255, 0); 
+    fill(255, 255, 0);
     ellipse(ballPos.x * cellSize + cellSize / 2, ballPos.y * cellSize + cellSize / 2, cellSize * 0.8);
 }
 
@@ -97,7 +94,7 @@ function mousePressed()
     }
 }
 
-async function mouseReleased()
+function mouseReleased()
 {
     if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
     {
@@ -109,9 +106,8 @@ async function mouseReleased()
     const y = Math.floor(mouseY / cellSize);
     if (isLegalMove(x, y))
     {
-        await movePiece(x, y);
-        // playerOneTurn = !playerOneTurn; 
-        switchPlayerTurn()
+        movePiece(x, y);
+
         if (isBlocked())
         {
             setTimeout(() =>
@@ -122,6 +118,9 @@ async function mouseReleased()
                     resetGame();
                 }
             }, 100);
+        } else
+        {
+            switchPlayerTurn();
         }
     }
 }
@@ -146,9 +145,6 @@ function isBlocked()
     }
     return true; // No legal moves available
 }
-
-
-
 
 function isLegalMove(x, y)
 {
@@ -185,15 +181,18 @@ function isLegalMove(x, y)
     return false;
 }
 
-async function movePiece(x, y)
+function movePiece(x, y)
 {
-    
+
     board[ballPos.x][ballPos.y] = true;
     board[x][y] = false;
     ballPos.x = x;
     ballPos.y = y;
     data = [ballPos.x, ballPos.y]
     moveEvent(data)
+
+
+    socket.emit('move-piece', data);
 
     // Check if the ball reached house 1
     if (x === houses[0][0] && y === houses[0][1])
@@ -219,8 +218,6 @@ async function movePiece(x, y)
             }
         }, 100);
     }
-
-    currentPlayer = 1 - currentPlayer; // Switch player turn
 }
 
 
@@ -234,31 +231,43 @@ function resetGame()
 
 function initializeSocket()
 {
-    // Connect to the Socket.io server
-    socket = io.connect('http://localhost:3003');
-
-    socket.on('update', (data) =>
+    try
     {
-        // Handle the update event from the server
-        console.log('Received update from server:', data);
+        socket = io.connect('http://localhost:3003');
 
-    });
+        socket.on('join', (data) =>
+        {
+            console.log("Join event triggered");
+            if (player == null)
+                player = data
+            console.log(data);
+        });
 
-    socket.on('join', (data) =>
+        socket.on('move-piece', (data) =>
+        {
+            console.log(`Move event triggered to coordinates: x: ${data[0]}, y: ${data[1]}`);
+            // Update the board with the received move data
+            const x = data[0];
+            const y = data[1];
+            board[ballPos.x][ballPos.y] = true;
+            board[x][y] = false;
+            ballPos.x = x;
+            ballPos.y = y;
+            switchPlayerTurn()
+        });
+
+
+        socket.on('switch-turn', () =>
+        {
+            console.log('Switching player event triggered');
+            playerOneTurn = !playerOneTurn;
+        });
+
+    } catch (e)
     {
-        if (player == null)
-            player = data
-        console.log(data);
+        console.log(e);
+    }
 
-    });
-
-    socket.on('switch-turn', () =>
-    {
-        console.log('Switching player turn');
-        playerOneTurn = !playerOneTurn; // Switch player turns
-    });
-
-    return socket; // Returning the socket object
 }
 
 function switchPlayerTurn()
@@ -271,7 +280,7 @@ function switchPlayerTurn()
 
 function moveEvent(data)
 {
-    socket.emit('move', data, () =>
+    socket.emit('move-piece', data, () =>
     {
         console.log('Server acknowledged the move event:');
     });
