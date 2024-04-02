@@ -50,6 +50,13 @@ io.on('connection', (socket) =>
         console.log("Piece moved to: " + data);
         io.emit('update', data);
     });
+
+
+    socket.on('switch-turn', () =>
+    {
+        console.log("Emmitign switch turn");
+        io.emit('switch-turn');
+    });
 });
 
 server.listen(PORT, () =>

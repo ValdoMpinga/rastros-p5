@@ -10,7 +10,7 @@ let isDragging = false;
 let offsetX, offsetY;
 let socket
 let player = null
-let turn = 1 
+let playerOneTurn = true
 
 function setup()
 {
@@ -82,6 +82,11 @@ function drawBall()
 
 function mousePressed()
 {
+    if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
+    {
+        return; // Prevent interaction for the current player if it's not their turn
+    }
+
     const x = Math.floor(mouseX / cellSize);
     const y = Math.floor(mouseY / cellSize);
     if (x === ballPos.x && y === ballPos.y)
@@ -91,6 +96,36 @@ function mousePressed()
         offsetY = mouseY - ballPos.y * cellSize;
     }
 }
+
+async function mouseReleased()
+{
+    if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
+    {
+        return; // Prevent interaction for the current player if it's not their turn
+    }
+
+    isDragging = false;
+    const x = Math.floor(mouseX / cellSize);
+    const y = Math.floor(mouseY / cellSize);
+    if (isLegalMove(x, y))
+    {
+        await movePiece(x, y);
+        // playerOneTurn = !playerOneTurn; 
+        switchPlayerTurn()
+        if (isBlocked())
+        {
+            setTimeout(() =>
+            {
+                const playAgain = confirm("No legal moves available. Player " + (currentPlayer + 1) + " wins! Want to play again?");
+                if (playAgain)
+                {
+                    resetGame();
+                }
+            }, 100);
+        }
+    }
+}
+
 
 function isBlocked()
 {
@@ -113,28 +148,6 @@ function isBlocked()
 }
 
 
-async function mouseReleased()
-{
-    isDragging = false;
-    const x = Math.floor(mouseX / cellSize);
-    const y = Math.floor(mouseY / cellSize);
-    if (isLegalMove(x, y))
-    {
-        await movePiece(x, y);
-        currentPlayer = 1 - currentPlayer;
-        if (isBlocked())
-        {
-            setTimeout(() =>
-            {
-                const playAgain = confirm("No legal moves available. Player " + (currentPlayer + 1) + " wins! Want to play again?");
-                if (playAgain)
-                {
-                    resetGame();
-                }
-            }, 100);
-        }
-    }
-}
 
 
 function isLegalMove(x, y)
@@ -239,7 +252,21 @@ function initializeSocket()
 
     });
 
+    socket.on('switch-turn', () =>
+    {
+        console.log('Switching player turn');
+        playerOneTurn = !playerOneTurn; // Switch player turns
+    });
+
     return socket; // Returning the socket object
+}
+
+function switchPlayerTurn()
+{
+    socket.emit('switch-turn', () =>
+    {
+        console.log('Switching player turn');
+    });
 }
 
 function moveEvent(data)
