@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Environment configuration
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Build files
+dist/
+bundle.js
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
