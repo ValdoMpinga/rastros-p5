@@ -1,4 +1,4 @@
-class house
+class House
 {
     constructor(position,color)
     {

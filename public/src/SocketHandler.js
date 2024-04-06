@@ -4,6 +4,8 @@ class SocketHandler
     {
         this.socket = null
         this.gameLogic = null;
+        this.ip = "192.168.1.2" 
+
     }
 
     setGameLogic(gameLogic)
@@ -35,7 +37,7 @@ class SocketHandler
 
     initializeSocket()
     {
-        this.socket = io.connect('http://localhost:3003');
+        this.socket = io.connect(`http://${this.ip}:3003`);
 
         this.socket.on('join', (data) =>
         {

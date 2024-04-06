@@ -8,9 +8,16 @@ const PORT = process.env.PORT || 3003;
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
 
 let connectedClients = 0;
+
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
 
 app.use(cors());
 
