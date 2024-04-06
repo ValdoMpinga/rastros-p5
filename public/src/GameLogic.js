@@ -1,6 +1,6 @@
 class GameLogic
 {
-    constructor(board, ball, houses, cellSize)
+    constructor(board, ball, houses, cellSize, socketHandler)
     {
         this.board = board;
         this.ball = ball;
@@ -9,13 +9,14 @@ class GameLogic
         this.player = null;
         this.currentPlayer = true;
         this.playerOneTurn = false
+        this.socketHandler = socketHandler
     }
 
     mouseReleased()
     {
         if ((this.player === "Player 1" && !this.playerOneTurn) || (this.player === "Player 2" && this.playerOneTurn))
         {
-            return; 
+            return;
         }
 
         this.isDragging = false;
@@ -31,33 +32,20 @@ class GameLogic
                 {
                     console.log(this.player + " is blocked")
                     if (this.player === "Player 1")
-                        this.announceWinner("Player 2 is blocked, the winner is Player 1!")
-                    else
-                        this.announceWinner("Player 1 is blocked, the winner is Player 2!")
-          
+                    {
+                        this.socketHandler.emmitWInnerAnnouncment("The winner is Player 1 because the Player 2 is blocked.");
+                    }
+                    else if (this.player === "Player 2")
+                    {
+                        this.socketHandler.emmitWInnerAnnouncment("The winner is Player 2, because the Player 1 is blocked.");
+                    }
+
                 }, 100);
             } else
             {
-                this.switchPlayerTurn()
+                this.socketHandler.emmitSwitchPlayerTurn()
             }
         }
-    }
-
-    switchPlayerTurn()
-    {
-        socket.emit('switch-turn', () =>
-        {
-            console.log('Switching player turn');
-        });
-    }
-
-
-    announceWinner(message)
-    {
-        socket.emit('announce-winner', message, () =>
-        {
-            console.log('Annoucing winner');
-        });
     }
 
     isLegalMove(x, y)
@@ -107,28 +95,30 @@ class GameLogic
         this.ball.position.x = x;
         this.ball.position.y = y;
         const data = [x, y];
-        socket.emit('move-piece', data);
+
+        this.socketHandler.emmitPieceMovement(data)
 
         for (const house of this.houses)
         {
             if (x === house.position[0] && y === house.position[1])
             {
+                console.log("Player 1, won");
                 setTimeout(() =>
                 {
-
-                    this.announceWinner("Player 1 won! Want to play again?")
+                    this.socketHandler.emmitWInnerAnnouncment("Player 1 won! Want to play again?")
                 }, 100);
                 break;
             } else if (
                 (x === house.position[1] && y === house.position[0])
             )
             {
+                console.log("Player 2, won");
+
                 setTimeout(() =>
                 {
-
-                    this.announceWinner("Player 2 won! Want to play again?")
-
+                    this.socketHandler.emmitWInnerAnnouncment("Player 2 won! Want to play again?")
                 }, 100);
+                break;
             }
         }
     }
@@ -137,7 +127,7 @@ class GameLogic
     {
         this.board.cells = this.board.initializeBoard();
         this.ball.position = { x: 3, y: 4 };
-        this.currentPlayer = 0;
+        this.playerOneTurn = false;
     }
 
     isBlocked()
@@ -159,7 +149,4 @@ class GameLogic
         }
         return true;
     }
-
-
-
 }
