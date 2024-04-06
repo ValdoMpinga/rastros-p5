@@ -33,7 +33,8 @@ function setup()
 
     socket.on('switch-turn', () =>
     {
-        gameLogic.currentPlayer = 1 - gameLogic.currentPlayer; // Switch player turn
+        console.log('Switching player turn');
+        gameLogic.playerOneTurn = !gameLogic.playerOneTurn 
     });
 
     socket.on('join', (data) =>
@@ -53,12 +54,19 @@ function draw()
     ball.draw();
 }
 
+
 function mousePressed()
 {
-    gameLogic.mousePressed();
+    if ((gameLogic.playerOneTurn && player === 'Player 1') || (!gameLogic.playerOneTurn && player === 'Player 2'))
+    {
+        gameLogic.mousePressed();
+    }
 }
 
 function mouseReleased()
 {
-    gameLogic.mouseReleased();
+    if ((gameLogic.playerOneTurn && player === 'Player 1') || (!gameLogic.playerOneTurn && player === 'Player 2'))
+    {
+        gameLogic.mouseReleased();
+    }
 }

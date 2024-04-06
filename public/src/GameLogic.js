@@ -8,11 +8,18 @@ class GameLogic
         this.ball = ball;
         this.houses = houses;
         this.cellSize = cellSize;
-        this.currentPlayer = 0;
+        this.player = null;
+        this.currentPlayer = true;
+        this.playerOneTurn = true
     }
 
     mousePressed()
     {
+        if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
+        {
+            return; // Prevent interaction for the current player if it's not their turn
+        }
+
         const x = Math.floor(mouseX / this.cellSize);
         const y = Math.floor(mouseY / this.cellSize);
         if (x === this.ball.position.x && y === this.ball.position.y)
@@ -25,6 +32,12 @@ class GameLogic
 
     mouseReleased()
     {
+        if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
+        {
+            return; // Prevent interaction for the current player if it's not their turn
+        }
+
+
         const x = Math.floor(mouseX / this.cellSize);
         const y = Math.floor(mouseY / this.cellSize);
         if (this.isLegalMove(x, y))
@@ -34,7 +47,7 @@ class GameLogic
             {
                 setTimeout(() =>
                 {
-                    const playAgain = confirm("No legal moves available. Player " + (this.currentPlayer + 1) + " wins! Want to play again?");
+                    const playAgain = confirm("No legal moves available. Player wins! Want to play again?");
                     if (playAgain)
                     {
                         this.resetGame();
@@ -42,10 +55,21 @@ class GameLogic
                 }, 100);
             } else
             {
+                switchPlayerTurn()
+                this.playerOneTurn = !this.playerOneTurn; // Switch player turn
                 socket.emit('switch-turn');
             }
         }
     }
+
+    switchPlayerTurn()
+    {
+        socket.emit('switch-turn', () =>
+        {
+            console.log('Switching player turn');
+        });
+    }
+
 
     isLegalMove(x, y)
     {
@@ -86,6 +110,8 @@ class GameLogic
         return false;
     }
 
+    // GameLogic.js
+
     movePiece(x, y)
     {
         this.board.cells[this.ball.position.x][this.ball.position.y] = true;
@@ -94,6 +120,30 @@ class GameLogic
         this.ball.position.y = y;
         const data = [x, y];
         socket.emit('move-piece', data);
+
+
+        if (x === house.position[0][0] && y === house.position[1][1])
+        {
+            setTimeout(() =>
+            {
+                const playAgain = confirm("Player 1 won! Want to play again?");
+                if (playAgain)
+                {
+                    this.resetGame();
+                }
+            }, 100);
+        } else if (x === house.position[1][0] && y === house.position[1][1])
+        {
+            setTimeout(() =>
+            {
+                const playAgain = confirm("Player 2 won! Want to play again?");
+                if (playAgain)
+                {
+                    this.resetGame();
+                }
+            }, 100);
+
+        }
     }
 
     resetGame()
