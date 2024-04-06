@@ -57,6 +57,12 @@ io.on('connection', (socket) =>
         console.log("Emmiting switch turn");
         io.emit('switch-turn');
     });
+    
+    socket.on('announce-winner', (message) =>
+    {
+        console.log("Announcing winner");
+        io.emit('announce-winner',message);
+    });
 
 
 });

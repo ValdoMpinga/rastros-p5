@@ -5,14 +5,21 @@ let board;
 let ball;
 let houses;
 let gameLogic;
+let playerOneHouseColor 
+let playerTwoHouseColor 
 
 function setup()
 {
-    
+
     createCanvas(boardSize * cellSize, boardSize * cellSize);
+    playerOneHouseColor = color(0, 153, 255)
+    playerTwoHouseColor = color(51, 255, 51)
     board = new Board(boardSize);
     ball = new Ball(3, 4);
-    houses = [new house([0, boardSize - 1]), new house([boardSize - 1, 0])];
+    houses = [
+        new house([0, boardSize - 1], playerOneHouseColor),
+        new house([boardSize - 1, 0], playerTwoHouseColor),
+    ];
     gameLogic = new GameLogic(board, ball, houses, cellSize);
 
     // Initialize socket connection
@@ -45,10 +52,20 @@ function setup()
     socket.on('switch-turn', () =>
     {
         console.log('Switching player turn');
-        gameLogic.playerOneTurn = !gameLogic.playerOneTurn 
+        gameLogic.playerOneTurn = !gameLogic.playerOneTurn
     });
 
- 
+    socket.on('announce-winner', (message) =>
+    {
+        console.log("Winner message: " + message);
+
+        alert(message)
+
+        setTimeout(() =>
+        {
+            gameLogic.resetGame();
+        }, 5000)
+    });
 
 }
 
@@ -61,14 +78,6 @@ function draw()
     ball.draw();
 }
 
-
-function mousePressed()
-{
-    if ((gameLogic.playerOneTurn && gameLogic.player === 'Player 1') || (!gameLogic.playerOneTurn && gameLogic.player === 'Player 2'))
-    {
-        gameLogic.mousePressed();
-    }
-}
 
 function mouseReleased()
 {

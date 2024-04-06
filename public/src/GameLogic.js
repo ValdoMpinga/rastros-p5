@@ -1,5 +1,3 @@
-// GameLogic.js
-
 class GameLogic
 {
     constructor(board, ball, houses, cellSize)
@@ -10,14 +8,14 @@ class GameLogic
         this.cellSize = cellSize;
         this.player = null;
         this.currentPlayer = true;
-        this.playerOneTurn = true
+        this.playerOneTurn = false
     }
 
     mouseReleased()
     {
         if ((this.player === "Player 1" && !this.playerOneTurn) || (this.player === "Player 2" && this.playerOneTurn))
         {
-            return; // Prevent interaction for the current player if it's not their turn
+            return; 
         }
 
         this.isDragging = false;
@@ -31,11 +29,12 @@ class GameLogic
             {
                 setTimeout(() =>
                 {
-                    const playAgain = confirm("No legal moves available. Player wins! Want to play again?");
-                    if (playAgain)
-                    {
-                        this.resetGame();
-                    }
+                    console.log(this.player + " is blocked")
+                    if (this.player === "Player 1")
+                        this.announceWinner("Player 2 is blocked, the winner is Player 1!")
+                    else
+                        this.announceWinner("Player 1 is blocked, the winner is Player 2!")
+          
                 }, 100);
             } else
             {
@@ -52,6 +51,14 @@ class GameLogic
         });
     }
 
+
+    announceWinner(message)
+    {
+        socket.emit('announce-winner', message, () =>
+        {
+            console.log('Annoucing winner');
+        });
+    }
 
     isLegalMove(x, y)
     {
@@ -108,11 +115,8 @@ class GameLogic
             {
                 setTimeout(() =>
                 {
-                    const playAgain = confirm("Player 1 won! Want to play again?");
-                    if (playAgain)
-                    {
-                        this.resetGame();
-                    }
+
+                    this.announceWinner("Player 1 won! Want to play again?")
                 }, 100);
                 break;
             } else if (
@@ -121,11 +125,9 @@ class GameLogic
             {
                 setTimeout(() =>
                 {
-                    const playAgain = confirm("Player 2 won! Want to play again?");
-                    if (playAgain)
-                    {
-                        this.resetGame();
-                    }
+
+                    this.announceWinner("Player 2 won! Want to play again?")
+
                 }, 100);
             }
         }
@@ -157,4 +159,7 @@ class GameLogic
         }
         return true;
     }
+
+
+
 }
