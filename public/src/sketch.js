@@ -18,9 +18,20 @@ function setup()
     // Initialize socket connection
     socket = io.connect('http://localhost:3003');
 
+
+    socket.on('join', (data) =>
+    {
+        console.log("Join event triggered");
+        if (gameLogic.player == null)
+            gameLogic.player = data
+
+        console.log("Join data", data);
+    });
+
     // Handle socket events
     socket.on('move-piece', (data) =>
     {
+
         // Update the board with the received move data
         const x = data[0];
         const y = data[1];
@@ -28,7 +39,7 @@ function setup()
         board.cells[x][y] = false;
         ball.position.x = x;
         ball.position.y = y;
-        gameLogic.currentPlayer = 1 - gameLogic.currentPlayer; // Switch player turn
+        gameLogic.switchPlayerTurn()
     });
 
     socket.on('switch-turn', () =>
@@ -37,11 +48,7 @@ function setup()
         gameLogic.playerOneTurn = !gameLogic.playerOneTurn 
     });
 
-    socket.on('join', (data) =>
-    {
-        // Handle joining event
-        console.log(data);
-    });
+ 
 
 }
 
@@ -57,7 +64,7 @@ function draw()
 
 function mousePressed()
 {
-    if ((gameLogic.playerOneTurn && player === 'Player 1') || (!gameLogic.playerOneTurn && player === 'Player 2'))
+    if ((gameLogic.playerOneTurn && gameLogic.player === 'Player 1') || (!gameLogic.playerOneTurn && gameLogic.player === 'Player 2'))
     {
         gameLogic.mousePressed();
     }
@@ -65,7 +72,7 @@ function mousePressed()
 
 function mouseReleased()
 {
-    if ((gameLogic.playerOneTurn && player === 'Player 1') || (!gameLogic.playerOneTurn && player === 'Player 2'))
+    if ((gameLogic.playerOneTurn && gameLogic.player === 'Player 1') || (!gameLogic.playerOneTurn && gameLogic.player === 'Player 2'))
     {
         gameLogic.mouseReleased();
     }

@@ -13,33 +13,17 @@ class GameLogic
         this.playerOneTurn = true
     }
 
-    mousePressed()
-    {
-        if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
-        {
-            return; // Prevent interaction for the current player if it's not their turn
-        }
-
-        const x = Math.floor(mouseX / this.cellSize);
-        const y = Math.floor(mouseY / this.cellSize);
-        if (x === this.ball.position.x && y === this.ball.position.y)
-        {
-            isDragging = true;
-            offsetX = mouseX - ballPos.x * cellSize;
-            offsetY = mouseY - ballPos.y * cellSize;
-        }
-    }
-
     mouseReleased()
     {
-        if ((player === "Player 1" && !playerOneTurn) || (player === "Player 2" && playerOneTurn))
+        if ((this.player === "Player 1" && !this.playerOneTurn) || (this.player === "Player 2" && this.playerOneTurn))
         {
             return; // Prevent interaction for the current player if it's not their turn
         }
 
-
+        this.isDragging = false;
         const x = Math.floor(mouseX / this.cellSize);
         const y = Math.floor(mouseY / this.cellSize);
+
         if (this.isLegalMove(x, y))
         {
             this.movePiece(x, y);
@@ -55,9 +39,7 @@ class GameLogic
                 }, 100);
             } else
             {
-                switchPlayerTurn()
-                this.playerOneTurn = !this.playerOneTurn; // Switch player turn
-                socket.emit('switch-turn');
+                this.switchPlayerTurn()
             }
         }
     }
@@ -110,7 +92,6 @@ class GameLogic
         return false;
     }
 
-    // GameLogic.js
 
     movePiece(x, y)
     {
@@ -121,28 +102,32 @@ class GameLogic
         const data = [x, y];
         socket.emit('move-piece', data);
 
-
-        if (x === house.position[0][0] && y === house.position[1][1])
+        for (const house of this.houses)
         {
-            setTimeout(() =>
+            if (x === house.position[0] && y === house.position[1])
             {
-                const playAgain = confirm("Player 1 won! Want to play again?");
-                if (playAgain)
+                setTimeout(() =>
                 {
-                    this.resetGame();
-                }
-            }, 100);
-        } else if (x === house.position[1][0] && y === house.position[1][1])
-        {
-            setTimeout(() =>
+                    const playAgain = confirm("Player 1 won! Want to play again?");
+                    if (playAgain)
+                    {
+                        this.resetGame();
+                    }
+                }, 100);
+                break;
+            } else if (
+                (x === house.position[1] && y === house.position[0])
+            )
             {
-                const playAgain = confirm("Player 2 won! Want to play again?");
-                if (playAgain)
+                setTimeout(() =>
                 {
-                    this.resetGame();
-                }
-            }, 100);
-
+                    const playAgain = confirm("Player 2 won! Want to play again?");
+                    if (playAgain)
+                    {
+                        this.resetGame();
+                    }
+                }, 100);
+            }
         }
     }
 
