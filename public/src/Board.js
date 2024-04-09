@@ -13,6 +13,7 @@ class Board
 
     draw()
     {
+
         const cellSize = width / this.size;
         for (let x = 0; x < this.size; x++)
         {

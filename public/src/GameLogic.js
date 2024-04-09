@@ -149,4 +149,9 @@ class GameLogic
         }
         return true;
     }
+
+    getPlayer()
+    {
+        return this.player;
+    }
 }
