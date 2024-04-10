@@ -22,6 +22,7 @@ class GameLogic
         this.isDragging = false;
         const x = Math.floor(mouseX / this.cellSize);
         const y = Math.floor(mouseY / this.cellSize);
+        const turnIndicator = document.querySelector('#turnIndicator');
 
         if (this.isLegalMove(x, y))
         {
@@ -30,6 +31,7 @@ class GameLogic
             {
                 setTimeout(() =>
                 {
+                    turnIndicator.textContent = ""
                     console.log(this.player + " is blocked")
                     if (this.player === "Player 1")
                     {
@@ -43,7 +45,11 @@ class GameLogic
                 }, 100);
             } else
             {
-                this.socketHandler.emmitSwitchPlayerTurn()
+                // turnIndicator.textContent = ""
+                // turnIndicator.textContent = ""
+                // turnIndicator.textContent = ""
+                // turnIndicator.textContent = ""
+                // this.socketHandler.emmitSwitchPlayerTurn()
             }
         }
     }
