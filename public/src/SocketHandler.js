@@ -4,6 +4,8 @@ class SocketHandler
     {
         this.socket = null
         this.gameLogic = null;
+        this.turnSwitchSound = new Audio('../sounds/turn-bell.wav');
+        this.turnSwitchSound.load();
     }
 
     setGameLogic(gameLogic)
@@ -35,7 +37,7 @@ class SocketHandler
 
     initializeSocket()
     {
-        this.socket = io.connect('http://localhost:3003');
+        this.socket = io.connect('http://192.168.1.2:3003');
 
         this.socket.on('join', (data) =>
         {
@@ -69,9 +71,12 @@ class SocketHandler
             if (this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 1")
             {
                 turnVar.textContent = "Your turn!"
+                this.turnSwitchSound.play();
+
             } else if (!this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 2")
             {
                 turnVar.textContent = "Your turn!"
+                this.turnSwitchSound.play();
             }
             else
             {

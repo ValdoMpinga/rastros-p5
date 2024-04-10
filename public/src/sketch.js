@@ -36,7 +36,7 @@ function setup()
             let turnVar = document.querySelector('#turnIndicator')
             turnVar.textContent = "Your turn!"
         }
-    }, 200)
+    }, 300)
 
 
 
