@@ -1,27 +1,58 @@
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rastros Game</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-  </style>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"
-    integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
-  <script src="p5.min.js"></script>
-  <script src="src/sketch.js"></script>
-  <script src="src/SocketHandler.js"></script>
-  <script src="src/Board.js"></script>
-  <script src="src/House.js"></script>
-  <script src="src/GameLogic.js"></script>
-  <script src="src/Ball.js"></script>
-</head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rastros Game</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+      }
+      canvas {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Rastros</h1>
+    <button id="resetButton">Read game manual</button>
+    <p id="gameInfo">
+      Goal: Go to the <span style="font-weight: bolder;" class="targetHouse"></span> house <span id="turnIndicator"></span>
+    </p>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"
+      integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="p5.min.js"></script>
+    <script src="src/sketch.js"></script>
+    <script src="src/SocketHandler.js"></script>
+    <script src="src/Board.js"></script>
+    <script src="src/House.js"></script>
+    <script src="src/Ball.js"></script>
+    <script src="src/GameLogic.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+          if (gameLogic.player == "Player 1") {
+            document.querySelector(".targetHouse").textContent = "Blue";
+            document.querySelector(".targetHouse").style.color = "blue";
+          } else {
+            document.querySelector(".targetHouse").textContent = "Green";
+            document.querySelector(".targetHouse").style.color = "green";       
+          }
+        }, 400);
+      });
+
+      document.getElementById("resetButton").onclick = function () {
+        alert("Manual here! \nComing soon lmfao!");
+      };
+    </script>
+  </body>
+</html>
