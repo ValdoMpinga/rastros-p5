@@ -5,8 +5,8 @@ let board;
 let ball;
 let houses;
 let gameLogic;
-let playerOneHouseColor 
-let playerTwoHouseColor 
+let playerOneHouseColor
+let playerTwoHouseColor
 
 function setup()
 {
@@ -28,6 +28,17 @@ function setup()
     socketHandler.setGameLogic(gameLogic);
 
     socketHandler.initializeSocket(gameLogic)
+
+    setTimeout(() =>
+    {
+        if (!gameLogic.playerOneTurn && gameLogic.player == "Player 2")
+        {
+            let turnVar = document.querySelector('#turnIndicator')
+            turnVar.textContent = "Your turn!"
+        }
+    }, 200)
+
+
 
     // socket = io.connect('http://localhost:3003');
 

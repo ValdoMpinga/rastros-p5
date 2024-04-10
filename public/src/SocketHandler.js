@@ -61,8 +61,23 @@ class SocketHandler
 
         this.socket.on('switch-turn', () =>
         {
+            let turnVar = document.querySelector('#turnIndicator')
+
             console.log('Switching player turn');
             this.gameLogic.playerOneTurn = !gameLogic.playerOneTurn
+
+            if (this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 1")
+            {
+                turnVar.textContent = "Your turn!"
+            } else if (!this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 2")
+            {
+                turnVar.textContent = "Your turn!"
+            }
+            else
+            {
+                turnVar.textContent = ""
+
+            }
         });
 
         this.socket.on('announce-winner', (message) =>
