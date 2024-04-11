@@ -36,51 +36,7 @@ function setup()
             let turnVar = document.querySelector('#turnIndicator')
             turnVar.textContent = "Your turn!"
         }
-    }, 300)
-
-
-
-    // socket = io.connect('http://localhost:3003');
-
-
-    // socket.on('join', (data) =>
-    // {
-    //     console.log("Join event triggered");
-    //     if (gameLogic.player == null)
-    //         gameLogic.player = data
-
-    //     console.log("Join data", data);
-    // });
-
-    // socket.on('move-piece', (data) =>
-    // {
-    //     const x = data[0];
-    //     const y = data[1];
-    //     board.cells[ball.position.x][ball.position.y] = true;
-    //     board.cells[x][y] = false;
-    //     ball.position.x = x;
-    //     ball.position.y = y;
-    //     gameLogic.switchPlayerTurn()
-    // });
-
-    // socket.on('switch-turn', () =>
-    // {
-    //     console.log('Switching player turn');
-    //     gameLogic.playerOneTurn = !gameLogic.playerOneTurn
-    // });
-
-    // socket.on('announce-winner', (message) =>
-    // {
-    //     console.log("Winner message: " + message);
-
-    //     alert(message)
-
-    //     setTimeout(() =>
-    //     {
-    //         gameLogic.resetGame();
-    //     }, 5000)
-    // });
-
+    }, 700)
 }
 
 function draw()

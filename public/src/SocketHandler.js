@@ -1,11 +1,12 @@
+const ngrokUrl = 'https://468a-2a01-11-c10-2b20-5d42-ec1-9ecf-e097.ngrok-free.app'
+const localhostUrl = '192.168.1.2:3003'
+
 class SocketHandler
 {
     constructor()
     {
         this.socket = null
         this.gameLogic = null;
-        this.turnSwitchSound = new Audio('../sounds/turn-bell.wav');
-        this.turnSwitchSound.load();
     }
 
     setGameLogic(gameLogic)
@@ -37,7 +38,7 @@ class SocketHandler
 
     initializeSocket()
     {
-        this.socket = io.connect('http://192.168.1.2:3003');
+        this.socket = io.connect(ngrokUrl);
 
         this.socket.on('join', (data) =>
         {
@@ -71,17 +72,16 @@ class SocketHandler
             if (this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 1")
             {
                 turnVar.textContent = "Your turn!"
-                this.turnSwitchSound.play();
-
+                turnVar.style.color = "green"
             } else if (!this.gameLogic.playerOneTurn && this.gameLogic.player == "Player 2")
             {
                 turnVar.textContent = "Your turn!"
-                this.turnSwitchSound.play();
+                turnVar.style.color = "green"
             }
             else
             {
-                turnVar.textContent = ""
-
+                turnVar.textContent = "Opps turn!"
+                turnVar.style.color = "red"
             }
         });
 
