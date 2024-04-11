@@ -38,7 +38,7 @@ class SocketHandler
 
     initializeSocket()
     {
-        this.socket = io.connect(ngrokUrl);
+        this.socket = io.connect(localhostUrl);
 
         this.socket.on('join', (data) =>
         {
